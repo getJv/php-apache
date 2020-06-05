@@ -28,8 +28,9 @@ RUN apt-get install libpq-dev -y && \
 
 # Instalação do mysql
 RUN docker-php-ext-install mysqli pdo_mysql
-    
 
+# instalação do GD
+RUN docker-php-ext-install gd    
 
 #Instalação laravel
 RUN composer global require laravel/installer && \
