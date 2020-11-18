@@ -2,7 +2,7 @@ FROM php:7.4-apache
 
 MAINTAINER Jhonatan Morais <jhonatanvinicius@gmail.com>
 
-# Update system
+# Update system 
 RUN apt-get update && \
     apt-get upgrade -y
 
