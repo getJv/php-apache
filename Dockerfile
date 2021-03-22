@@ -33,6 +33,10 @@ RUN docker-php-ext-install mysqli pdo_mysql
 RUN apt-get install libpng-dev  -y && \
     docker-php-ext-install gd    
 
+# instalação do pcntl 
+RUN docker-php-ext-configure pcntl --enable-pcntl && \
+    docker-php-ext-install pcntl     
+
 #Instalação laravel
 RUN composer global require laravel/installer && \
 	echo "alias laravel='~/.composer/vendor/bin/laravel'" >> ~/.bashrc && \
@@ -56,7 +60,18 @@ RUN sed -i 's+/var/www/html+/var/www/html/${DOCUMENT_ROOT_CONTEXT}+g' /etc/apach
     sed -i 's+/var/www/html+/var/www/html/${DOCUMENT_ROOT_CONTEXT}+g' /etc/apache2/sites-available/default-ssl.conf && \
 	sed -i 's+AllowOverride None+AllowOverride ${ALLOW_OVERRIDE_OPTION} \n SetEnv APPLICATION_ENV ${APPLICATION_ENV_OPTION}+g' /etc/apache2/apache2.conf
 
+#xdebug 
+#https://jansenfelipe.com.br/2019/09/20/debugando-uma-aplicacao-php-no-vscode-com-xdebug-docker/
+#https://dev.to/_mertsimsek/using-xdebug-with-docker-2k8o
 
+RUN yes | pecl install xdebug \
+    && docker-php-ext-enable xdebug \
+    && echo "variables_order = \"EGPCS\"" >> /usr/local/etc/php/conf.d/99-variables-order.ini \
+    && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.log=/var/log/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini 
 
 
 
